@@ -1,4 +1,4 @@
-package edu.colostate.cs.storm;
+package edu.colostate.cs.count;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
@@ -6,7 +6,6 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
-import backtype.storm.utils.Utils;
 
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public class EventSpout extends BaseRichSpout {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("time","key1","key2","key3","key4"));
+        declarer.declare(new Fields("time", "key1", "key2", "key3", "key4"));
     }
 
     @Override
@@ -34,6 +33,9 @@ public class EventSpout extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
-        this.collector.emit(this.event);
+        for (int i = 0; i < 100; i++) {
+            this.collector.emit(this.event);
+        }
+
     }
 }

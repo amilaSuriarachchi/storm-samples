@@ -1,12 +1,10 @@
-package edu.colostate.cs.storm;
+package edu.colostate.cs.count;
 
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.utils.Utils;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,12 +18,12 @@ public class EventTopology {
     public static void main(String[] args) {
 
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("producer", new EventSpout(), 1);
-        builder.setBolt("relay", new RelayBolt(), 1).shuffleGrouping("producer");
-        builder.setBolt("counter", new EventBolt(), 1).shuffleGrouping("relay");
+        builder.setSpout("producer", new EventSpout(), 2);
+//        builder.setBolt("relay", new RelayBolt(), 1).shuffleGrouping("producer");
+        builder.setBolt("counter", new EventBolt(), 2).shuffleGrouping("producer");
 
         Config conf = new Config();
-        conf.setNumWorkers(3);
+        conf.setNumWorkers(4);
         try {
             StormSubmitter.submitTopology("wordCount", conf, builder.createTopology());
         } catch (AlreadyAliveException e) {

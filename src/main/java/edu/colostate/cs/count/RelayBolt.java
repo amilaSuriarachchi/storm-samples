@@ -1,4 +1,4 @@
-package edu.colostate.cs.storm;
+package edu.colostate.cs.count;
 
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;

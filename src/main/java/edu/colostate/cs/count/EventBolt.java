@@ -1,11 +1,10 @@
-package edu.colostate.cs.storm;
+package edu.colostate.cs.count;
 
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -37,11 +36,11 @@ public class EventBolt implements IRichBolt {
 
         long currentValue = this.atomicLong.incrementAndGet();
         if ((currentValue % 1000000) == 0) {
-            System.out.println("Message Rate ==> " + 1000000000 / (System.currentTimeMillis() - this.lastTime));
+            System.out.println("Message Rate ==> " + 1000000000 / (System.currentTimeMillis() - this.lastTime) + " From thread - " + Thread.currentThread().getId());
             this.lastTime = System.currentTimeMillis();
         }
-        this.collector.emit(input, new Values(input.getDouble(0), input.getString(1),
-                                                        input.getDouble(2), input.getLong(3), input.getString(4)));
+//        this.collector.emit(input, new Values(input.getDouble(0), input.getString(1),
+//                                                        input.getDouble(2), input.getLong(3), input.getString(4)));
 //        this.collector.ack(input);
     }
 
