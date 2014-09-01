@@ -19,7 +19,7 @@ public class EventTopology {
     public static void main(String[] args) {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("producer", new EventProducer(), 1);
-        builder.setBolt("receiver", new EventReceiver(), 4).fieldsGrouping("producer", new Fields(Constants.STREAM_ID));
+        builder.setBolt("receiver", new EventReceiver(), 1).fieldsGrouping("producer", new Fields(Constants.STREAM_ID));
 
         Config conf = new Config();
         conf.setNumWorkers(2);

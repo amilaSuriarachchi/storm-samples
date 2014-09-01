@@ -27,33 +27,12 @@ import java.util.Map;
  */
 public class EventProducer extends BaseRichSpout {
 
-    private RecordReader recordReader;
+    private EventGenerator eventGenerator;
+
     private SpoutOutputCollector spoutOutputCollector;
 
     private long startTime;
     private long numberOfMsg;
-
-    public void createRecordReader() {
-
-        List<String> commands = new ArrayList<String>();
-        commands.add("rdsamp");
-        commands.add("-r");
-        commands.add("3000762/");
-        commands.add("-p");
-//        commands.add("-f");
-//        commands.add("1000");
-//        commands.add("-t");
-//        commands.add("1100");
-        commands.add("-c");
-        commands.add("-s");
-        commands.add("II");
-
-        try {
-            this.recordReader = new RecordReader(commands, "/s/chopin/a/grad/amilas/granulas/Granules/");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
@@ -63,8 +42,12 @@ public class EventProducer extends BaseRichSpout {
     @Override
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         this.spoutOutputCollector = spoutOutputCollector;
-        createRecordReader();
         this.numberOfMsg = 0;
+
+        this.eventGenerator = new EventGenerator();
+        Thread thread = new Thread(this.eventGenerator);
+        thread.start();
+
         this.startTime = System.currentTimeMillis();
     }
 
@@ -72,8 +55,7 @@ public class EventProducer extends BaseRichSpout {
     public void nextTuple() {
         Record record = null;
 
-        if (this.recordReader.hasNext()) {
-            record = this.recordReader.next();
+        if ( (record = this.eventGenerator.getRecord()) != null) {
             for (int i = 0; i < 20; i++) {
                 this.spoutOutputCollector.emit(new Values(record.getTime(), record.getValue(), "ecg" + i));
                 this.numberOfMsg++;
@@ -94,7 +76,6 @@ public class EventProducer extends BaseRichSpout {
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            this.recordReader.close();
             Utils.sleep(100000000);
 
         }
